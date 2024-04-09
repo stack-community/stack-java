@@ -1,31 +1,60 @@
 package io.stack_community.github.stack_java;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Stack {
+    public boolean exitmode = false;
+
+    public Stack() {
+
+    }
+
     public static void main(String[] args) {
+        Stack stack = new Stack();
+
+        stack.interpreter(args);
+    }
+
+    public void interpreter(String[] args) {
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(isr);
+
         System.out.println("Stack Programming Language: Java Edition");
 
         Executor executor = new Stack.Executor(Mode.Debug);
         // REPL Execution
-        while (true) {
-            String code = new String();
-            while (true) {
-                String enter = input("> ");
+        while (!this.exitmode) {
+            String code = "";
+            while (!this.exitmode) {
+                String enter = input(br, "> ");
                 code += enter + "\n";
-                if (enter == "") {
+                if (enter.equals("")) {
                     break;
                 }
             }
 
             executor.evaluateProgram(code);
         }
+
+        try {
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static String input(String prompt) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("何か入力してください: ");
-        return scanner.nextLine().trim();        
+    public static String input(BufferedReader reader, String prompt) {
+        System.out.print(prompt);
+        String str = null;
+        try {
+            str = reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 
     interface Displayable {
