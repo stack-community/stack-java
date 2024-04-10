@@ -423,7 +423,7 @@ public class Stack {
                 this.stack.add(new Type(Type.TypeEnum.NUMBER, a - b));
             }
 
-            // Other commands...
+            // TODO Other commands...
         }
 
         public Type popStack() { // Pop stack's top value
