@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class Stack {
-    public boolean exitmode = false;
-
     public Stack() {
 
     }
@@ -24,11 +22,11 @@ public class Stack {
 
         System.out.println("Stack Programming Language: Java Edition");
 
-        Executor executor = new Stack.Executor(Mode.Debug);
+        Executor executor = new Stack.Executor(Mode.Debug, true);
         // REPL Execution
-        while (!this.exitmode) {
+        while (!executor.exitmode) {
             String code = "";
-            while (!this.exitmode) {
+            while (!executor.exitmode) {
                 String enter = input(br, "> ");
                 code += enter + "\n";
                 if (enter.equals("")) {
@@ -44,6 +42,8 @@ public class Stack {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.exit(executor.exitcode);
     }
 
     public static String input(BufferedReader reader, String prompt) {
@@ -72,36 +72,6 @@ public class Stack {
 
         private TypeEnum type;
         private Object value;
-
-//    public Type(double value) {
-//        this.type = TypeEnum.NUMBER;
-//        this.value = value;
-//    }
-
-//    public Type(String value) {
-//        this.type = TypeEnum.STRING;
-//        this.value = value;
-//    }
-//
-//    public Type(boolean value) {
-//        this.type = TypeEnum.BOOL;
-//        this.value = value;
-//    }
-//
-//    public Type(List<Type> value) {
-//        this.type = TypeEnum.LIST;
-//        this.value = value;
-//    }
-//
-//    public Type(String name, HashMap<String, Type> value) {
-//        this.type = TypeEnum.OBJECT;
-//        this.value = value;
-//    }
-//
-//    public Type(String error) {
-//        this.type = TypeEnum.ERROR;
-//        this.value = error;
-//    }
 
         public Type(TypeEnum type, Object value) {
             this.type = type;
@@ -239,11 +209,19 @@ public class Stack {
         private List<Type> stack; // Data stack
         private Map<String, Type> memory; // Variable's memory
         private Mode mode; // Execution mode
+        public boolean exitmode = false;
+        public int exitcode = 0;
+        public boolean interpreterMode = false;
 
         public Executor(Mode mode) { // Constructor
             this.stack = new ArrayList<>();
             this.memory = new HashMap<>();
             this.mode = mode;
+        }
+
+        public Executor(Mode mode, boolean interpreterMode) {
+            this(mode);
+            this.interpreterMode = interpreterMode;
         }
 
         public void logPrint(String msg) { // Output log
@@ -263,10 +241,14 @@ public class Stack {
 
         public String showStack() { // Show inside the stack
             StringBuilder result = new StringBuilder("Stack〔 ");
-            for (Type item : this.stack) {
-                result.append(item.display()).append(" | ");
+            for (int i = 0; i < this.stack.size(); i++) {
+                Type item = this.stack.get(i);
+                result.append(item.display());
+                if (i != this.stack.size() - 1) {
+                    result.append(" | ");
+                }
             }
-            result.append("〕");
+            result.append(" 〕");
             return result.toString();
         }
 
@@ -417,13 +399,33 @@ public class Stack {
             }
 
             // Subtraction
-            if (command.equals("sub")) {
+            else if (command.equals("sub")) {
                 double b = this.popStack().getNumber();
                 double a = this.popStack().getNumber();
                 this.stack.add(new Type(Type.TypeEnum.NUMBER, a - b));
             }
 
+            // Pop in stack
+            else if (command.equals("pop")) {
+                this.popStack();
+            }
+
+            // Exit Stack
+            else if (command.equals("exit")) {
+                double code = this.popStack().getNumber();
+                this.exitmode = true;
+                this.exitcode = (int) code;
+                if (this.interpreterMode == false) {
+                    System.exit(exitcode);
+                }
+            }
+
             // TODO Other commands...
+
+            // When other string inputted
+            else {
+                this.stack.add(new Type(Type.TypeEnum.STRING, command));
+            }
         }
 
         public Type popStack() { // Pop stack's top value
