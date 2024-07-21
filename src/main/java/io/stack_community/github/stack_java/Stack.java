@@ -25,16 +25,16 @@ public class Stack {
         Executor executor = new Stack.Executor(Mode.Debug, true);
         // REPL Execution
         while (!executor.exitmode) {
-            String code = "";
+            StringBuilder code = new StringBuilder();
             while (!executor.exitmode) {
                 String enter = input(br, "> ");
-                code += enter + "\n";
-                if (enter.equals("")) {
+                code.append(enter).append("\n");
+                if (enter.isEmpty()) {
                     break;
                 }
             }
 
-            executor.evaluateProgram(code);
+            executor.evaluateProgram(code.toString());
         }
 
         try {
@@ -206,7 +206,7 @@ public class Stack {
     }
 
     public static class Executor {
-        private List<Type> stack; // Data stack
+        protected List<Type> stack; // Data stack
         private Map<String, Type> memory; // Variable's memory
         private Mode mode; // Execution mode
         public boolean exitmode = false;
@@ -390,43 +390,7 @@ public class Stack {
 
         // execute string as commands
         public void executeCommand(String command) {
-            // Commands of calculation
-
-            // addition
-            if (command.equals("add")) {
-                double b = this.popStack().getNumber();
-                double a = this.popStack().getNumber();
-                this.stack.add(new Type(Type.TypeEnum.NUMBER, a + b));
-            }
-
-            // Subtraction
-            else if (command.equals("sub")) {
-                double b = this.popStack().getNumber();
-                double a = this.popStack().getNumber();
-                this.stack.add(new Type(Type.TypeEnum.NUMBER, a - b));
-            }
-
-            // Pop in stack
-            else if (command.equals("pop")) {
-                this.popStack();
-            }
-
-            // Exit Stack
-            else if (command.equals("exit")) {
-                double code = this.popStack().getNumber();
-                this.exitmode = true;
-                this.exitcode = (int) code;
-                if (this.interpreterMode == false) {
-                    System.exit(exitcode);
-                }
-            }
-
-            // TODO Other commands...
-
-            // When other string inputted
-            else {
-                this.stack.add(new Type(Type.TypeEnum.STRING, command));
-            }
+            new Functions(this, command);
         }
 
         public Type popStack() { // Pop stack's top value
