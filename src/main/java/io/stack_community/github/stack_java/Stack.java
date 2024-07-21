@@ -6,6 +6,10 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class Stack {
+    public static String name = "Stack Programming Language: Java Edition";
+    public static String baseVersion = "1.12";
+    public static String version = "1.0.0-Betaa";
+
     public Stack() {
 
     }
@@ -20,7 +24,9 @@ public class Stack {
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(isr);
 
-        System.out.println("Stack Programming Language: Java Edition");
+        System.out.println(name);
+        System.out.println("Version: " + version);
+        System.out.println("BaseVersion(Stack): " + baseVersion);
 
         Executor executor = new Stack.Executor(Mode.Debug, true);
         // REPL Execution
@@ -65,17 +71,9 @@ public class Stack {
         T convert();
     }
 
-    public static class Type {
-        public static enum TypeEnum {
+    public record Type(TypeEnum type, Object value) {
+        public enum TypeEnum {
             NUMBER, STRING, BOOL, LIST, OBJECT, ERROR
-        }
-
-        private TypeEnum type;
-        private Object value;
-
-        public Type(TypeEnum type, Object value) {
-            this.type = type;
-            this.value = value;
         }
 
         public String display() {
@@ -209,6 +207,7 @@ public class Stack {
         protected List<Type> stack; // Data stack
         private Map<String, Type> memory; // Variable's memory
         private Mode mode; // Execution mode
+        private Functions functions;
         public boolean exitmode = false;
         public int exitcode = 0;
         public boolean interpreterMode = false;
@@ -217,6 +216,7 @@ public class Stack {
             this.stack = new ArrayList<>();
             this.memory = new HashMap<>();
             this.mode = mode;
+            this.functions = new Functions(this);
         }
 
         public Executor(Mode mode, boolean interpreterMode) {
@@ -240,7 +240,7 @@ public class Stack {
         }
 
         public String showStack() { // Show inside the stack
-            StringBuilder result = new StringBuilder("Stack〔 ");
+            StringBuilder result = new StringBuilder("Stack { ");
             for (int i = 0; i < this.stack.size(); i++) {
                 Type item = this.stack.get(i);
                 result.append(item.display());
@@ -248,7 +248,7 @@ public class Stack {
                     result.append(" | ");
                 }
             }
-            result.append(" 〕");
+            result.append(" }");
             return result.toString();
         }
 
@@ -344,7 +344,7 @@ public class Stack {
             for (String token : syntax) {
                 // Show inside stack to debug
                 String stack = this.showStack();
-                this.logPrint(stack + " ← " + token + "\n");
+                this.logPrint(stack + " <- " + token + "\n");
 
                 char[] chars = token.toCharArray();
 
@@ -390,12 +390,12 @@ public class Stack {
 
         // execute string as commands
         public void executeCommand(String command) {
-            new Functions(this, command);
+            functions.execute(command);
         }
 
         public Type popStack() { // Pop stack's top value
             if (!this.stack.isEmpty()) {
-                return this.stack.remove(this.stack.size() - 1);
+                return this.stack.removeLast();
             } else {
                 this.logPrint("Error! There are not enough values on the stack. returns default value\n");
                 return new Type(Type.TypeEnum.STRING, "");
