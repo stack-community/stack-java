@@ -8,7 +8,7 @@ import java.util.*;
 public class Stack {
     public static String name = "Stack Programming Language: Java Edition";
     public static String baseVersion = "1.12";
-    public static String version = "1.0.0-Betaa";
+    public static String version = "1.0.0-Beta";
 
     public Stack() {
 
@@ -205,7 +205,7 @@ public class Stack {
 
     public static class Executor {
         protected List<Type> stack; // Data stack
-        private Map<String, Type> memory; // Variable's memory
+        protected Map<String, Type> memory; // Variable's memory
         private Mode mode; // Execution mode
         private Functions functions;
         public boolean exitmode = false;
