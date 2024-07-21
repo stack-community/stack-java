@@ -388,7 +388,8 @@ public class Stack {
             this.logPrint(stack + "\n");
         }
 
-        public void executeCommand(String command) { // execute string as commands
+        // execute string as commands
+        public void executeCommand(String command) {
             // Commands of calculation
 
             // addition
