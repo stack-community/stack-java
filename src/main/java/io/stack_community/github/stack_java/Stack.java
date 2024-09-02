@@ -8,7 +8,7 @@ import java.util.*;
 public class Stack {
     public static String name = "Stack Programming Language: Java Edition";
     public static String baseVersion = "1.12";
-    public static String version = "1.0.0-Beta";
+    public static String version = "1.0.0-Beta4";
 
     public Stack() {
 

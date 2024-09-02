@@ -1,6 +1,8 @@
 package io.stack_community.github.stack_java;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 import java.util.function.Supplier;
 
 public class Functions {
@@ -70,7 +72,60 @@ public class Functions {
 
             // Trigonometric sine
             addFunction("sin", (e) -> {
+                double number = e.popStack().getNumber();
+                e.stack.add(new Stack.Type(Stack.Type.TypeEnum.NUMBER, Math.sin(number)));
+            });
 
+            // Trigonometric cosine
+            addFunction("cos", (e) -> {
+                double number = e.popStack().getNumber();
+                e.stack.add(new Stack.Type(Stack.Type.TypeEnum.NUMBER, Math.cos(number)));
+            });
+
+            // Trigonometric tangent
+            addFunction("tan", (e) -> {
+                double number = e.popStack().getNumber();
+                e.stack.add(new Stack.Type(Stack.Type.TypeEnum.NUMBER, Math.tan(number)));
+            });
+
+            // Logical operations of AND
+            addFunction("and", (e) -> {
+                boolean b = e.popStack().getBool();
+                boolean a = e.popStack().getBool();
+                e.stack.add(new Stack.Type(Stack.Type.TypeEnum.BOOL, a && b));
+            });
+
+            // Logical operations of OR
+            addFunction("or", (e) -> {
+                boolean b = e.popStack().getBool();
+                boolean a = e.popStack().getBool();
+                e.stack.add(new Stack.Type(Stack.Type.TypeEnum.BOOL, a || b));
+            });
+
+            // Logical operations of NOT
+            addFunction("not", (e) -> {
+                boolean a = e.popStack().getBool();
+                e.stack.add(new Stack.Type(Stack.Type.TypeEnum.BOOL, !a));
+            });
+
+            // Judge is it equal
+            addFunction("equal", (e) -> {
+                String b = e.popStack().getString();
+                String a = e.popStack().getString();
+                e.stack.add(new Stack.Type(Stack.Type.TypeEnum.BOOL, a.equals(b)));
+            });
+
+            // Judge is it less
+            addFunction("less", (e) -> {
+                double b = e.popStack().getNumber();
+                double a = e.popStack().getNumber();
+                e.stack.add(new Stack.Type(Stack.Type.TypeEnum.BOOL, a < b));
+            });
+
+            addFunction("rand", (e) -> {
+                List<Stack.Type> list = e.popStack().getList();
+                Stack.Type result = list.get(new Random().nextInt(list.size()));
+                e.stack.add(result);
             });
 
             // Commands of control
